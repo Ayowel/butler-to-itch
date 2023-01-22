@@ -173,11 +173,11 @@ describe('Is ButlerExecutor.pushFile working', () => {
       /* Close and check promise */
       expect(() => p.cbs[0][1](retval)).not.toThrow();
       if (retval == 0) {
-        expect(pushPromise).resolves.not.toThrow();
+        await expect(pushPromise).resolves.not.toThrow();
         expect(core.debug).toBeCalledWith('3 stdout text follow-up\n3 stdout text 2');
         expect(core.debug).toBeCalledWith('3 stderr text');
       } else {
-        expect(pushPromise).rejects.toThrow();
+        await expect(pushPromise).rejects.toThrow();
         expect(core.error).toBeCalledWith('3 stdout text follow-up\n3 stdout text 2');
         expect(core.error).toBeCalledWith('3 stderr text');
       }
@@ -234,8 +234,8 @@ describe('Is ButlerExecutor.push working', () => {
   );
 
   it.each([
-    ['*-release.zip', 4],
-    ['game-*', 3],
+    ['*release.zip', 4],
+    ['game*', 3],
     ['qwerty-*', 0]
   ])("Ensure file pattern '%s' maps to %s files", async (file_pattern, match_count) => {
     opts.action = 'push';
@@ -252,9 +252,32 @@ describe('Is ButlerExecutor.push working', () => {
     ex.pushFile = jest.fn(async (key, user, game, version, channel, file) => {});
     if (match_count) {
       await expect(ex.push(opts.push_opt)).resolves.not.toThrow();
-      expect(ex.pushFile).toBeCalledTimes(1);
+      expect(ex.pushFile).toBeCalledTimes(match_count);
     } else {
       await expect(ex.push(opts.push_opt)).rejects.toThrow();
+    }
+  });
+
+  it.each([
+    ['*release.zip', ['linux-x64', 'mac', 'windows', 'android']],
+    ['game*', ['linux-x64', 'mac', 'windows']]
+  ])("Ensure file pattern '%s' maps files to channels %s", async (file_pattern, channels) => {
+    opts.action = 'push';
+    opts.push_opt = {
+      auto_channel: true,
+      butler_key: 'XXX',
+      files: [['', file_pattern]],
+      itch_game: 'GAME',
+      itch_user: 'USER',
+      version: ''
+    };
+    const ex = new executor.ButlerExecutor(opts);
+    const pushfile_mock = jest.fn(async (key, user, game, version, channel, file) => {});
+    ex.pushFile = pushfile_mock;
+    await expect(ex.push(opts.push_opt)).resolves.not.toThrow();
+    const detected_channels = pushfile_mock.mock.calls.map(v => v[4]);
+    for (const channel of channels) {
+      expect(detected_channels).toContain(channel);
     }
   });
 });

@@ -10068,8 +10068,9 @@ class ButlerExecutor {
             /* Validate file channels */
             const pushed_channeled_files = {};
             const pushed_channelless_files = [];
-            for (let channel in effective_files) {
-                for (const file of effective_files[channel]) {
+            for (const base_channel in effective_files) {
+                for (const file of effective_files[base_channel]) {
+                    let channel = base_channel;
                     if (!channel) {
                         if (opts.auto_channel) {
                             channel = this.detectFileChannels(file);
@@ -10079,21 +10080,25 @@ class ButlerExecutor {
                         if (channel in pushed_channeled_files) {
                             throw Error(util.format('Attempting to push more than one file on channel %s (current: %s, previous: %s)', channel, file, pushed_channeled_files[channel]));
                         }
+                        core.info(`The file ${file} will be pushed to the channel ${channel}.`);
                         pushed_channeled_files[channel] = file;
                     }
                     else {
+                        core.info(`The file ${file} will be pushed without a channel.`);
                         core.error(`Files should not be pushed without a channel, but this one will: ${file}`);
                         pushed_channelless_files.push(file);
                     }
                 }
             }
             /* Start upload */
+            core.debug(`Starting uploads.`);
             const push_promises = [];
             for (const channel in pushed_channeled_files) {
                 push_promises.push(this.pushFile(opts.butler_key, opts.itch_user, opts.itch_game, opts.version, channel, pushed_channeled_files[channel]));
             }
             push_promises.push(...pushed_channelless_files.map(f => this.pushFile(opts.butler_key, opts.itch_user, opts.itch_game, opts.version, '', f)));
             yield Promise.all(push_promises).then(v => {
+                core.info("All files are pushed to Itch.");
                 core.endGroup();
                 return v;
             });
@@ -10108,6 +10113,7 @@ class ButlerExecutor {
                 }
                 let stdout = '';
                 let stderr = '';
+                core.debug(`Spawn process with "${this.getExecutablePath()}" ${push_args}`);
                 const child = cp.spawn(this.getExecutablePath(), push_args, {
                     env: {
                         BUTLER_API_KEY: key
@@ -10157,7 +10163,7 @@ class ButlerExecutor {
             x64: ['x64']
         };
         for (const key in mappings) {
-            const rule = RegExp(`(^|[._-])(${mappings[key].join('|')})[._-]`);
+            const rule = RegExp(`(^|[._-])(${mappings[key].join('|')})[._-]`, 'i');
             if (rule.test(file)) {
                 res.push(key);
             }
