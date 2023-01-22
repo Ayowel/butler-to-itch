@@ -1,0 +1,48 @@
+name: "Butler to Itch"
+description: "Install Butler and upload to itch.io"
+branding:
+  color: green
+  icon: upload
+inputs:
+  action:
+    description: "What should be done with the action"
+    default: push
+  install_dir:
+    description: "Where the SDK should be installed"
+    required: false
+
+  check_signature:
+    description: "Should the signature of the downloaded Butler executable be verified"
+    default: "true"
+  update_path:
+    description: "Whether to update the PATH"
+    default: "false"
+  butler_version:
+    description: "The butler version to install"
+    default: latest
+
+  butler_key:
+    description: "The butler key to use when uploading assets"
+    required: false
+  itch_user:
+    description: "The name of the user that publishes the games"
+    required: false
+  itch_game:
+    description: "The name of the game to publish"
+    required: false
+  version:
+    description: "Version number to release"
+    required: false
+  files:
+    description: "Paths to the files that should be pushed"
+    required: false
+  auto_channel:
+    description: "Whether to parse file names to create channels."
+    default: "true"
+
+outputs:
+  install_dir:
+    description: "The directory where the SDK was installed with the install action"
+runs:
+  using: "node16"
+  main: "dist/setup/index.js"
