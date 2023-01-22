@@ -1,4 +1,4 @@
-# Ren'Py installer
+# Butler to Itch
 
 [![License](https://img.shields.io/github/license/Ayowel/butler-to-itch)](https://github.com/Ayowel/butler-to-itch/blob/master/LICENSE)
 [![Latest version](https://img.shields.io/github/v/tag/Ayowel/butler-to-itch)](https://www.github.com/Ayowel/butler-to-itch/releases/latest)
@@ -53,7 +53,6 @@ The step configuration looks like this:
 
 ## Usage
 
-For best performance, we recommend to cache Butler's directory.
 Your Butler key `MUST` be saved as a secret so as to not appear in your project's repository.
 
 ### Release a project
@@ -70,24 +69,38 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          path: project
-      - uses: actions/cache@v3
-        with:
-          path: butler
-          key: ${{ runner.os }}-butler
       - uses: Ayowel/butler-to-itch@v0.1.0
         with:
-          install_dir: butler
           butler_key: ${{ secrets.BUTLER_CREDENTIALS }}
           itch_user: Ayowel
           itch_game: renpy-extensions-demo
           version: ${{ github.ref_name }}
-          # We assume that we have the following files in project/build:
+          # We assume that we have the following files in ./build:
           # release-linux.tar.gz, release-windows.zip,
           # release-mac.zip, java-release.apk
           files: |
-                   project/build/release-*
-            doc    project/docs/html
-            mobile project/build/java-*
+                   build/release-*
+            doc    docs/html
+            mobile build/java-*
 ```
+
+## Implementation details
+
+### Behavior of auto_channel
+
+`auto_channel` parses the file name to build a channel string.
+
+| Channel | Matched strings |
+| :---: | :--- |
+| doc | `doc`, `docs`, `documentation` |
+| web | `web`, `html`, `html5` |
+| android | `android`, `mobile` |
+| linux | `linux`, `unix`, `gnu` |
+| mac | `mac`, `macintosh`, `macos`, `macosx`, `osx` |
+| windows | `win`, `windows`, `xp` |
+| x32 | `x32` |
+| x64 | `x64` |
+
+* If more than one channel string matches, the resulting channel is all maches separated by a "`-`".
+* String matching is case-insensitive
+* Strings match only if the string is delimited by `.`, `_`, `-`, or the start of the filename.
