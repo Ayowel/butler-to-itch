@@ -106,3 +106,7 @@ The step configuration looks like this:
 * If more than one channel string matches, the resulting channel is all maches separated by a "`-`".
 * String matching is case-insensitive
 * Strings match only if the string is delimited by `.`, `_`, `-`, or the start of the filename.
+
+### Channel names in `files`
+
+Channel names in the `files` input field may only contain lowercase alphanumerical characters and hyphens, or they won't be recognized as such.
