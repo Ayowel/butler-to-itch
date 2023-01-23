@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: Ayowel/butler-to-itch@v0.1.0
+      - uses: Ayowel/butler-to-itch@v1.0.0
         with:
           butler_key: ${{ secrets.BUTLER_CREDENTIALS }}
           itch_user: Ayowel
@@ -45,7 +45,7 @@ jobs:
 The step configuration looks like this:
 
 ```yml
-- uses: Ayowel/butler-to-itch@v0.1.0
+- uses: Ayowel/butler-to-itch@v1.0.0
   with:
     # Whether to install Butler or to push a file.
     # This may be used when you want to use Butler with custom
