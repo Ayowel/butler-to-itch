@@ -5,6 +5,41 @@
 
 This action installs Butler and uses it to push assets to itch.io
 
+## Usage
+
+Your Butler key should be saved as a secret.
+
+### Release a project
+
+This example pushes 5 files to Itch, each in a dedicated channel.
+
+```yml
+# .github/workflows/release.yml
+name: Release project
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: Ayowel/butler-to-itch@v0.1.0
+        with:
+          butler_key: ${{ secrets.BUTLER_CREDENTIALS }}
+          itch_user: Ayowel
+          itch_game: renpy-extensions-demo
+          version: ${{ github.ref_name }}
+          # We assume that we have the following files in ./build:
+          # release-linux.tar.gz, release-windows.zip,
+          # release-mac.zip, java-release.apk
+          files: |
+                   build/release-*
+            doc    docs/html
+            mobile build/java-*
+```
+
 ## Inputs
 
 The step configuration looks like this:
@@ -50,39 +85,6 @@ The step configuration looks like this:
 | Output name | Description |
 | :---: | :--- |
 | __`install_dir`__ | Path to Butler's install directory |
-
-## Usage
-
-Your Butler key `MUST` be saved as a secret so as to not appear in your project's repository.
-
-### Release a project
-
-```yml
-# .github/workflows/release.yml
-name: Release project
-on:
-  workflow_dispatch:
-
-jobs:
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: Ayowel/butler-to-itch@v0.1.0
-        with:
-          butler_key: ${{ secrets.BUTLER_CREDENTIALS }}
-          itch_user: Ayowel
-          itch_game: renpy-extensions-demo
-          version: ${{ github.ref_name }}
-          # We assume that we have the following files in ./build:
-          # release-linux.tar.gz, release-windows.zip,
-          # release-mac.zip, java-release.apk
-          files: |
-                   build/release-*
-            doc    docs/html
-            mobile build/java-*
-```
 
 ## Implementation details
 
