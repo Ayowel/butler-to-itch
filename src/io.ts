@@ -51,6 +51,7 @@ export function parseInputs(): CommandOptions {
                 path = second_item;
               }
             }
+            core.debug(`File input "${v}" mapped to channel "${channel}" with pattern "${path}"`);
             return [channel, path];
           })
           .filter(v => v[1])
