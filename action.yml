@@ -44,5 +44,5 @@ outputs:
   install_dir:
     description: "The directory where the SDK was installed with the install action"
 runs:
-  using: "node16"
+  using: "node20"
   main: "dist/setup/index.js"
