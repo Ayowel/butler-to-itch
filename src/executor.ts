@@ -41,8 +41,7 @@ export class ButlerExecutor {
     core.startGroup('Push files');
     const effective_files: { [id: string]: string[] } = {};
     for (const pair of opts.files) {
-      util.promisify(glob.glob)(pair[1]);
-      const matched_paths = glob.sync(pair[1]);
+      const matched_paths = await glob.glob(pair[1]);
       if (matched_paths.length == 0) {
         throw Error(`Could not find any file with: ${pair[0]} ${pair[1]}`);
       }
