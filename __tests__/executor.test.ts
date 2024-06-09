@@ -3,7 +3,6 @@ import mockfs from 'mock-fs';
 import fs from 'fs';
 import { https } from 'follow-redirects';
 import path from 'path';
-import util from 'util';
 
 import * as tc from '@actions/tool-cache';
 import * as core from '@actions/core';
@@ -17,7 +16,7 @@ const cache_dir = fs.mkdirSync('test_cache', { recursive: true }) || 'test_cache
 let opts: models.CommandOptions;
 
 beforeEach(async () => {
-  tmpdir = await util.promisify(fs.mkdtemp)('jest-test-');
+  tmpdir = fs.mkdtempSync('jest-test-');
   opts = {
     action: 'push',
     install_dir: tmpdir,
@@ -39,7 +38,7 @@ beforeEach(async () => {
       } else {
         dest = cache_path;
       }
-      return util.promisify(fs.realpath)(dest);
+      return fs.realpathSync(dest);
     }
     return new Promise((resolve, reject) => {
       const req = https.get(url, res => {
@@ -55,7 +54,7 @@ beforeEach(async () => {
           } else {
             dest = cache_path;
           }
-          resolve(await util.promisify(fs.realpath)(dest));
+          resolve(fs.realpathSync(dest));
         });
       });
     });
@@ -63,7 +62,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  await util.promisify(fs.rm)(tmpdir, { recursive: true });
+  fs.rmSync(tmpdir, { recursive: true });
   jest.resetAllMocks();
   jest.clearAllMocks();
   jest.restoreAllMocks();
