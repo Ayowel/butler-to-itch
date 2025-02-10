@@ -21,6 +21,7 @@ beforeEach(async () => {
     action: 'push',
     install_dir: tmpdir,
     install_opt: {
+      butler_source: 'https://broth.itch.zone/butler',
       butler_version: 'latest',
       check_signature: false,
       update_path: false

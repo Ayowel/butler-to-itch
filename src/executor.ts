@@ -20,7 +20,7 @@ export class ButlerExecutor {
 
   public async install(opts: CommandInstallOptions) {
     core.startGroup('Install Butler');
-    const download_url = this.getInstallUrl(opts.butler_version);
+    const download_url = this.getInstallUrl(opts.butler_source, opts.butler_version);
     core.info(`Downloading Butler from ${download_url}`);
     const downloaded_path = await tc.downloadTool(download_url);
     fs.mkdirSync(this.install_dir, { recursive: true });
@@ -180,20 +180,12 @@ export class ButlerExecutor {
     return res.join('-');
   }
 
-  protected getInstallUrl(version: string): string {
-    return util.format(
-      'https://broth.itch.ovh/butler/%s/%s/archive/default',
-      getButlerOsPath(),
-      version.toUpperCase()
-    );
+  protected getInstallUrl(source: string, version: string): string {
+    return `${source}/${getButlerOsPath()}/${version.toUpperCase()}/archive/default`;
   }
 
-  protected getSignatureUrl(version: string): string {
-    return util.format(
-      'https://broth.itch.ovh/butler/%s/%s/signature/default',
-      getButlerOsPath(),
-      version.toUpperCase()
-    );
+  protected getSignatureUrl(source: string, version: string): string {
+    return `${source}/${getButlerOsPath()}/${version.toUpperCase()}/signature/default`;
   }
 
   protected getExecutablePath(): string {

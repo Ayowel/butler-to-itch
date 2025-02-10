@@ -53,6 +53,8 @@ The step configuration looks like this:
     action: "push"
     # Where Butler should be installed.
     install_dir: ~/.butler
+    # Where Butler should be downloaded from.
+    butler_source: "https://broth.itch.ovh/butler"
 
     ###### Push options ######
     # Your butler key (see https://itch.io/user/settings/api-keys)
