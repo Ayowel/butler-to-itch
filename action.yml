@@ -10,10 +10,13 @@ inputs:
   install_dir:
     description: "Where the SDK should be installed"
     required: false
+  butler_source:
+    description: "Where Butler should be downloaded from"
+    default: "https://broth.itch.zone/butler"
 
   check_signature:
     description: "Should the signature of the downloaded Butler executable be verified"
-    default: "true"
+    default: "false"
   update_path:
     description: "Whether to update the PATH"
     default: "false"

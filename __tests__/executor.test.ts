@@ -21,6 +21,7 @@ beforeEach(async () => {
     action: 'push',
     install_dir: tmpdir,
     install_opt: {
+      butler_source: 'https://broth.itch.zone/butler',
       butler_version: 'latest',
       check_signature: false,
       update_path: false
@@ -30,7 +31,10 @@ beforeEach(async () => {
 
   const spyTcDownloadTool = jest.spyOn(tc, 'downloadTool');
   spyTcDownloadTool.mockImplementation(async (url, dest) => {
-    const filename = url.split('/').pop() as string;
+    const filename = `${url.split('/').pop()}-${url
+      .split('')
+      .map(c => c.charCodeAt(0))
+      .reduce((p, v) => p + v, 0)}`;
     const cache_path = path.join(cache_dir, filename);
     if (fs.existsSync(cache_path)) {
       if (dest) {
@@ -41,7 +45,7 @@ beforeEach(async () => {
       return fs.realpathSync(dest);
     }
     return new Promise((resolve, reject) => {
-      const req = https.get(url, res => {
+      https.get(url, res => {
         if (res.statusCode && res.statusCode >= 400) {
           reject('Received error code');
         }

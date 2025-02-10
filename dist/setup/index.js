@@ -29189,7 +29189,7 @@ class ButlerExecutor {
     install(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             core.startGroup('Install Butler');
-            const download_url = this.getInstallUrl(opts.butler_version);
+            const download_url = this.getInstallUrl(opts.butler_source, opts.butler_version);
             core.info(`Downloading Butler from ${download_url}`);
             const downloaded_path = yield tc.downloadTool(download_url);
             fs.mkdirSync(this.install_dir, { recursive: true });
@@ -29322,11 +29322,11 @@ class ButlerExecutor {
         }
         return res.join('-');
     }
-    getInstallUrl(version) {
-        return util.format('https://broth.itch.ovh/butler/%s/%s/archive/default', (0, utils_1.getButlerOsPath)(), version.toUpperCase());
+    getInstallUrl(source, version) {
+        return `${source}/${(0, utils_1.getButlerOsPath)()}/${version.toUpperCase()}/archive/default`;
     }
-    getSignatureUrl(version) {
-        return util.format('https://broth.itch.ovh/butler/%s/%s/signature/default', (0, utils_1.getButlerOsPath)(), version.toUpperCase());
+    getSignatureUrl(source, version) {
+        return `${source}/${(0, utils_1.getButlerOsPath)()}/${version.toUpperCase()}/signature/default`;
     }
     getExecutablePath() {
         let executable_name = 'butler';
@@ -29386,7 +29386,8 @@ function parseInputs() {
         action,
         install_dir,
         install_opt: {
-            check_signature: (0, utils_1.stringToBool)(core.getInput('check_signature'), true),
+            butler_source: core.getInput('butler_source') || 'https://broth.itch.zone/butler',
+            check_signature: (0, utils_1.stringToBool)(core.getInput('check_signature'), false),
             update_path: (0, utils_1.stringToBool)(core.getInput('update_path'), false),
             butler_version: core.getInput('butler_version') || 'latest'
         },
