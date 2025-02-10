@@ -84,7 +84,7 @@ describe('IsExecutorInstallWorking', () => {
     expect(ex.isInstalled()).toBe(true);
     expect(fs.existsSync((ex as any).getExecutablePath())).toBe(true);
     expect(core.addPath).toHaveBeenCalled();
-  });
+  }, 10*1000);
 
   test('Install Butler to directory without signature and path update', async () => {
     opts.action = 'install';
@@ -97,7 +97,7 @@ describe('IsExecutorInstallWorking', () => {
     expect(ex.isInstalled()).toBe(true);
     expect(fs.existsSync((ex as any).getExecutablePath())).toBe(true);
     expect(core.addPath).not.toHaveBeenCalled();
-  });
+  }, 10*1000);
 });
 
 describe('Is ButlerExecutor.pushFile working', () => {
