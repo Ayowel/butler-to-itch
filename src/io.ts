@@ -19,7 +19,7 @@ export function parseInputs(): CommandOptions {
     install_dir,
     install_opt: {
       butler_source: core.getInput('butler_source') || 'https://broth.itch.zone/butler',
-      check_signature: stringToBool(core.getInput('check_signature'), true),
+      check_signature: stringToBool(core.getInput('check_signature'), false),
       update_path: stringToBool(core.getInput('update_path'), false),
       butler_version: core.getInput('butler_version') || 'latest'
     },

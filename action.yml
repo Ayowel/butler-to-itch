@@ -16,7 +16,7 @@ inputs:
 
   check_signature:
     description: "Should the signature of the downloaded Butler executable be verified"
-    default: "true"
+    default: "false"
   update_path:
     description: "Whether to update the PATH"
     default: "false"
