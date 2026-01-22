@@ -37,7 +37,7 @@ Generic parameters:
 | --------- | ----------- | ------- |
 | **action** | Whether to `install` Butler or to `push` a file. | `'push'` |
 | **install_dir** | Install Butler to a custom location. | `~/.butler` |
-| **butler_source** | Where Butler should be download from. | `'https://broth.itch.ovh/butler'` |
+| **butler_source** | Where Butler should be download from. | `'https://broth.itch.zone/butler'` |
 
 Push parameters:
 
