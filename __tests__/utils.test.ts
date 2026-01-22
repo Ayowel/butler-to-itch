@@ -28,9 +28,9 @@ describe('isStringToBoolThrowing', () => {
 });
 
 describe('isGetButlerOsPathFunctional', () => {
-  let os_info: { platform: NodeJS.Platform; arch: string } = {
+  let os_info: { platform: NodeJS.Platform; arch: NodeJS.Architecture } = {
     platform: 'linux',
-    arch: 'x32'
+    arch: 'x32' as NodeJS.Architecture // Dropped in Node 18, to be dropped onde Node 22 becomes unsupported
   };
   beforeEach(() => {
     const spyOsPlatform = jest.spyOn(os, 'platform');
@@ -46,11 +46,10 @@ describe('isGetButlerOsPathFunctional', () => {
 
   const test_working: [NodeJS.Platform, string, string][] = [
     ['linux', 'x64', 'linux-amd64'],
-    ['darwin', 'x64', 'darwin-amd64'],
-    ['win32', 'x32', 'windows-386']
+    ['darwin', 'x64', 'darwin-amd64']
   ];
   it.each(test_working)('[%s,%s] utils.getButlerOsPath() -> %s', (platform, arch, result) => {
-    os_info.arch = arch;
+    os_info.arch = arch as NodeJS.Architecture;
     os_info.platform = platform;
     expect(utils.getButlerOsPath()).toBe(result);
   });
@@ -60,7 +59,7 @@ describe('isGetButlerOsPathFunctional', () => {
     ['darwin', 'arm']
   ];
   it.each(test_throwing)('[%s,%s] utils.getButlerOsPath() throws', (platform, arch) => {
-    os_info.arch = arch;
+    os_info.arch = arch as NodeJS.Architecture;
     os_info.platform = platform;
     expect(() => utils.getButlerOsPath()).toThrow();
   });

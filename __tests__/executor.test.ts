@@ -185,12 +185,12 @@ describe('Is ButlerExecutor.pushFile working', () => {
       expect(() => p.cbs[0][1](retval)).not.toThrow();
       if (retval == 0) {
         await expect(pushPromise).resolves.not.toThrow();
-        expect(core.debug).toBeCalledWith('3 stdout text follow-up\n3 stdout text 2');
-        expect(core.debug).toBeCalledWith('3 stderr text');
+        expect(core.debug).toHaveBeenCalledWith('3 stdout text follow-up\n3 stdout text 2');
+        expect(core.debug).toHaveBeenCalledWith('3 stderr text');
       } else {
         await expect(pushPromise).rejects.toThrow();
-        expect(core.error).toBeCalledWith('3 stdout text follow-up\n3 stdout text 2');
-        expect(core.error).toBeCalledWith('3 stderr text');
+        expect(core.error).toHaveBeenCalledWith('3 stdout text follow-up\n3 stdout text 2');
+        expect(core.error).toHaveBeenCalledWith('3 stderr text');
       }
     }
   );
@@ -232,8 +232,8 @@ describe('Is ButlerExecutor.push working', () => {
       const ex = new executor.ButlerExecutor(opts);
       ex.pushFile = jest.fn(async (key, user, game, version, channel, file) => {});
       await expect(ex.push(opts.push_opt)).resolves.not.toThrow();
-      expect(ex.pushFile).toBeCalledTimes(1);
-      expect(ex.pushFile).toBeCalledWith(
+      expect(ex.pushFile).toHaveBeenCalledTimes(1);
+      expect(ex.pushFile).toHaveBeenCalledWith(
         butler_key,
         itch_user,
         itch_game,
@@ -263,7 +263,7 @@ describe('Is ButlerExecutor.push working', () => {
     ex.pushFile = jest.fn(async (key, user, game, version, channel, file) => {});
     if (match_count) {
       await expect(ex.push(opts.push_opt)).resolves.not.toThrow();
-      expect(ex.pushFile).toBeCalledTimes(match_count);
+      expect(ex.pushFile).toHaveBeenCalledTimes(match_count);
     } else {
       await expect(ex.push(opts.push_opt)).rejects.toThrow();
     }

@@ -74,6 +74,6 @@ describe('IsOutputWriterWorking', () => {
 
   it('Test output writer', () => {
     io.writeOutputs({ install_dir: 'path/to/dir' });
-    expect(spyCoreSetOutput).toBeCalledWith('install_dir', 'path/to/dir');
+    expect(spyCoreSetOutput).toHaveBeenCalledWith('install_dir', 'path/to/dir');
   });
 });

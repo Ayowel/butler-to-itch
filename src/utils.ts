@@ -22,7 +22,7 @@ export function getButlerOsPath(): string {
     case 'linux':
       platform ||= os.platform();
       switch (os.arch()) {
-        case 'x32':
+        case 'x32' as NodeJS.Architecture: // Dropped in Node 18, to be dropped onde Node 22 becomes unsupported
           return util.format('%s-%s', platform, '386');
         case 'x64':
           return util.format('%s-%s', platform, 'amd64');
