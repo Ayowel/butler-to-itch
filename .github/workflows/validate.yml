@@ -7,13 +7,74 @@ on:
       - releases/*
     paths-ignore:
       - '**.md'
+      - 'LICENSE'
   pull_request:
     paths-ignore:
       - '**.md'
+      - 'LICENSE'
+  workflow_dispatch:
+    inputs:
+      enable-audit:
+        description: "Optional input to enable npm package audit process"
+        required: false
+        type: boolean
+        default: true
+      node-version-baseline:
+        description: "Reference node version for which no change should occur after building"
+        required: false
+        type: string
+        default: "20.x"
+      node-caching:
+        description: "Optional input to set up caching for the setup-node action. The input syntax corresponds to the setup-node's one. Set to an empty string if caching isn't needed"
+        required: false
+        type: string
+        default: "npm"
+
+env:
+  NODE_VERSION_BASELINE: ${{inputs.node-version-baseline || '20.x'}}
+  NODE_CACHING: ${{inputs.node-caching || 'npm'}}
+  ENABLE_AUDIT: ${{inputs.enable-audit || true}}
 
 jobs:
-  call-basic-validation:
-    name: Basic validation
-    uses: actions/reusable-workflows/.github/workflows/basic-validation.yml@main
-    with:
-      operating-systems: "['ubuntu-latest']"
+  build:
+    runs-on: "ubuntu-latest"
+    strategy:
+      fail-fast: true
+      matrix:
+        node-version: ["20.x", "22.x", "24.x"]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{matrix.node-version}}
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{matrix.node-version}}
+        cache: ${{env.NODE_CACHING}}
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run prettier
+      run: npm run format-check
+
+    - name: Run linter
+      run: npm run lint
+
+    - name: Build
+      run: npm run build
+
+    - name: Test
+      run: npm test
+
+    - name: Look for file changes
+      run: |
+        git --no-pager diff
+        git status --porcelain --untracked-files no
+        test -z "$(git status --porcelain --untracked-files no)"
+      if: ${{env.NODE_VERSION_BASELINE == matrix.node-version}}
+
+    - name: Audit packages
+      run: npm audit --audit-level=high
+      if: ${{env.ENABLE_AUDIT}}
