@@ -26,6 +26,8 @@ export function getButlerOsPath(): string {
           return util.format('%s-%s', platform, '386');
         case 'x64':
           return util.format('%s-%s', platform, 'amd64');
+        case 'arm64':
+          return util.format('%s-%s', platform, 'arm64');
         default:
           throw Error(util.format('Unknown OS architecture: %s', os.arch()));
       }
