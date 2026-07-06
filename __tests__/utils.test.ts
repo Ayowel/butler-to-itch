@@ -46,7 +46,9 @@ describe('isGetButlerOsPathFunctional', () => {
 
   const test_working: [NodeJS.Platform, string, string][] = [
     ['linux', 'x64', 'linux-amd64'],
-    ['darwin', 'x64', 'darwin-amd64']
+    ['darwin', 'x64', 'darwin-amd64'],
+    ['win32', 'x32', 'windows-386'],
+    ['darwin', 'arm64', 'darwin-arm64']
   ];
   it.each(test_working)('[%s,%s] utils.getButlerOsPath() -> %s', (platform, arch, result) => {
     os_info.arch = arch as NodeJS.Architecture;
@@ -54,10 +56,7 @@ describe('isGetButlerOsPathFunctional', () => {
     expect(utils.getButlerOsPath()).toBe(result);
   });
 
-  const test_throwing: [NodeJS.Platform, string][] = [
-    ['android', 'x64'],
-    ['darwin', 'arm']
-  ];
+  const test_throwing: [NodeJS.Platform, string][] = [['android', 'x64']];
   it.each(test_throwing)('[%s,%s] utils.getButlerOsPath() throws', (platform, arch) => {
     os_info.arch = arch as NodeJS.Architecture;
     os_info.platform = platform;
