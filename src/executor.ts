@@ -50,7 +50,7 @@ export class ButlerExecutor {
 
     /* Validate file channels */
     const pushed_channeled_files: { [id: string]: string } = {};
-    const pushed_channelless_files = [];
+    const pushed_channelless_files: string[] = [];
     for (const base_channel in effective_files) {
       for (const file of effective_files[base_channel]) {
         let channel = base_channel;
@@ -160,7 +160,7 @@ export class ButlerExecutor {
 
   protected detectFileChannels(file: string): string {
     file = path.basename(file);
-    const res = [];
+    const res: string[] = [];
     const mappings: { [key: string]: string[] } = {
       doc: ['doc', 'docs', 'documentation'],
       web: ['web', 'html', 'html5'],

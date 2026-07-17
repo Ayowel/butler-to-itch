@@ -6,14 +6,18 @@
   "author": "Ayowel",
   "license": "MIT",
   "main": "dist/setup/index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "ncc build -o dist/setup src/butler-manage.ts",
     "format": "prettier --write \"{,!(node_modules)/**/}*.ts\"",
     "format-check": "prettier --check \"{,!(node_modules)/**/}*.ts\"",
     "lint": "echo \"Fake command that does nothing. It is used in reusable workflows\"",
     "prerelease": "npm run-script build",
-    "release": "git add -f dist/setup/index.js dist/cleanup/index.js",
-    "test": "jest"
+    "release": "git add -f dist/setup/index.js dist/setup/package.json",
+    "test": "tsc --noEmit && node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
   },
   "repository": {
     "type": "git",
@@ -25,24 +29,24 @@
     "setup"
   ],
   "dependencies": {
-    "@actions/core": "^2.0.2",
-    "@actions/tool-cache": "^3.0.0",
-    "glob": "^13.0.0"
+    "@actions/core": "^3.0.1",
+    "@actions/tool-cache": "^4.0.0",
+    "glob": "^13.0.6"
   },
   "devDependencies": {
     "@types/follow-redirects": "^1.14.4",
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/mock-fs": "^4.13.4",
-    "@types/node": "^25.0.0",
-    "@vercel/ncc": "^0.38.4",
-    "follow-redirects": "^1.15.11",
-    "jest": "^30.2.0",
-    "jest-circus": "^30.2.0",
-    "js-yaml": "^4.1.1",
+    "@types/node": "^22.13.14",
+    "@vercel/ncc": "^0.44.1",
+    "follow-redirects": "^1.16.0",
+    "jest": "^30.4.2",
+    "jest-circus": "^30.4.2",
+    "js-yaml": "^5.2.1",
     "mock-fs": "^5.5.0",
-    "prettier": "^3.8.1",
-    "ts-jest": "^29.4.6",
-    "typescript": "^5.9.3"
+    "prettier": "^3.9.4",
+    "ts-jest": "^29.4.11",
+    "typescript": "^6.0.3"
   }
 }
