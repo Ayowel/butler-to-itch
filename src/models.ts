@@ -1,5 +1,5 @@
 export type CommandOptions = {
-  // Commont information
+  // Common information
   action: string;
   install_dir: string;
 
