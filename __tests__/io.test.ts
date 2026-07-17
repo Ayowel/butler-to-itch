@@ -1,7 +1,10 @@
-import fs from 'fs';
-import yaml from 'js-yaml';
-import * as core from '@actions/core';
-import * as io from '../src/io';
+import fs from 'fs/promises';
+import * as yaml from 'js-yaml';
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+
+import { mock_actions_core } from './actionUtil';
+
+mock_actions_core();
 
 afterEach(() => {
   jest.resetAllMocks();
@@ -9,21 +12,32 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-const action_info = fs.readFileSync('action.yml', { encoding: 'utf-8' });
-
 describe('IsInputParserWorking', () => {
   let core_input: { [id: string]: string } = {};
-  beforeEach(() => {
-    const action_yml = yaml.load(action_info) as { inputs: { [id: string]: { default?: string } } };
+  let action_yml: { inputs: { [id: string]: { default?: string } } };
+
+  beforeAll(async () => {
+    const action_template = await fs.readFile('action.yml', { encoding: 'utf-8' });
+    action_yml = yaml.load(action_template) as typeof action_yml;
+  });
+
+  beforeEach(async () => {
+    const core = await import('@actions/core');
     core_input = {};
     for (const k in action_yml.inputs) {
       core_input[k] = action_yml.inputs[k]['default'] || '';
     }
-    const spyCoreGetInput = jest.spyOn(core, 'getInput');
-    spyCoreGetInput.mockImplementation(key => core_input[key] || '');
+    (core.getInput as jest.Mock<typeof core.getInput>).mockImplementation(
+      key => core_input[key] || ''
+    );
   });
 
-  it('Simple action read (install)', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it('Simple action read (install)', async () => {
+    const io = await import('../src/io');
     core_input.action = 'install';
     core_input.butler_version = ''; // default to 'latest' if not provided
     const opts = io.parseInputs();
@@ -31,18 +45,21 @@ describe('IsInputParserWorking', () => {
     expect(opts.install_opt.butler_version).toBe('latest');
   });
 
-  it('Unknown action read (qwerty)', () => {
+  it('Unknown action read (qwerty)', async () => {
+    const io = await import('../src/io');
     core_input.action = 'qwerty';
     expect(() => io.parseInputs()).toThrow();
   });
 
-  it('Insufficient push options', () => {
+  it('Insufficient push options', async () => {
+    const io = await import('../src/io');
     core_input.action = 'push';
     core_input.itch_user = 'USER';
     expect(() => io.parseInputs()).toThrow();
   });
 
-  it('Split file path parser options', () => {
+  it('Split file path parser options', async () => {
+    const io = await import('../src/io');
     core_input.action = 'push';
     core_input.butler_key = 'XXXX';
     core_input.itch_user = 'USER';
@@ -66,14 +83,10 @@ describe('IsInputParserWorking', () => {
 });
 
 describe('IsOutputWriterWorking', () => {
-  let spyCoreSetOutput: jest.SpyInstance<void, [name: string, value: any]>;
-  beforeEach(() => {
-    const action_yml = yaml.load(action_info) as { inputs: { [id: string]: { default?: string } } };
-    spyCoreSetOutput = jest.spyOn(core, 'setOutput');
-  });
-
-  it('Test output writer', () => {
+  it('Test output writer', async () => {
+    const core = await import('@actions/core');
+    const io = await import('../src/io');
     io.writeOutputs({ install_dir: 'path/to/dir' });
-    expect(spyCoreSetOutput).toHaveBeenCalledWith('install_dir', 'path/to/dir');
+    expect(core.setOutput).toHaveBeenCalledWith('install_dir', 'path/to/dir');
   });
 });

@@ -1,3 +1,4 @@
+import * as fspromises from 'fs/promises';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as os from 'os';
@@ -23,7 +24,7 @@ export class ButlerExecutor {
     const download_url = this.getInstallUrl(opts.butler_source, opts.butler_version);
     core.info(`Downloading Butler from ${download_url}`);
     const downloaded_path = await tc.downloadTool(download_url);
-    fs.mkdirSync(this.install_dir, { recursive: true });
+    await fspromises.mkdir(this.install_dir, { recursive: true });
     core.info(`Extracting Butler to ${this.install_dir}`);
     await tc.extractZip(downloaded_path, this.install_dir);
     if (opts.check_signature) {
@@ -50,7 +51,7 @@ export class ButlerExecutor {
 
     /* Validate file channels */
     const pushed_channeled_files: { [id: string]: string } = {};
-    const pushed_channelless_files = [];
+    const pushed_channelless_files: string[] = [];
     for (const base_channel in effective_files) {
       for (const file of effective_files[base_channel]) {
         let channel = base_channel;
@@ -160,7 +161,7 @@ export class ButlerExecutor {
 
   protected detectFileChannels(file: string): string {
     file = path.basename(file);
-    const res = [];
+    const res: string[] = [];
     const mappings: { [key: string]: string[] } = {
       doc: ['doc', 'docs', 'documentation'],
       web: ['web', 'html', 'html5'],

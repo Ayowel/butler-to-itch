@@ -36,8 +36,7 @@ export function parseInputs(): CommandOptions {
         itch_game: core.getInput('itch_game'),
         version: core.getInput('version'),
         auto_channel: stringToBool(core.getInput('auto_channel'), true),
-        files: core
-          .getInput('files')
+        files: (core.getInput('files') as string)
           .split('\n')
           .map((v): [string, string] => {
             v = v.trim();
