@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import * as fspromises from 'fs/promises';
 import * as fs from 'fs';
 import * as glob from 'glob';
@@ -24,17 +25,33 @@ export class ButlerExecutor {
     const download_url = this.getInstallUrl(opts.butler_source, opts.butler_version);
     core.info(`Downloading Butler from ${download_url}`);
     const downloaded_path = await tc.downloadTool(download_url);
+    await this.validateChecksum(downloaded_path, opts.checksum);
     await fspromises.mkdir(this.install_dir, { recursive: true });
     core.info(`Extracting Butler to ${this.install_dir}`);
     await tc.extractZip(downloaded_path, this.install_dir);
-    if (opts.check_signature) {
-      core.error('Butler archive signature verification is not supported yet.');
-    }
     if (opts.update_path) {
       core.info('Adding Butler to PATH');
       core.addPath(this.install_dir);
     }
     core.endGroup();
+  }
+
+  public async validateChecksum(path: string, alg_hash: string) {
+    if (alg_hash) {
+      const [hash_type, hash] = alg_hash.split(':');
+      const cryptohash = crypto.createHash(hash_type);
+      cryptohash.setEncoding('hex')
+      cryptohash.write(await fspromises.readFile(path));
+      cryptohash.end();
+      const calc_hash = cryptohash.read();
+      if (calc_hash === hash) {
+        core.debug(`Got expected hash value ${calc_hash}`);
+      } else {
+        const message = `Unexpected hash ${hash_type}:${calc_hash} instead of ${hash_type}:${hash}`;
+        core.error(message);
+        throw Error(message);
+      }
+    }
   }
 
   public async push(opts: CommandPushOptions) {
@@ -193,10 +210,6 @@ export class ButlerExecutor {
 
   protected getInstallUrl(source: string, version: string): string {
     return `${source}/${getButlerOsPath()}/${version.toUpperCase()}/archive/default`;
-  }
-
-  protected getSignatureUrl(source: string, version: string): string {
-    return `${source}/${getButlerOsPath()}/${version.toUpperCase()}/signature/default`;
   }
 
   protected getExecutablePath(): string {

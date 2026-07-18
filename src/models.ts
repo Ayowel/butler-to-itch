@@ -9,7 +9,7 @@ export type CommandOptions = {
 
 export type CommandInstallOptions = {
   butler_source: string;
-  check_signature: boolean;
+  checksum: string;
   update_path: boolean;
   butler_version: string;
 };

@@ -54,7 +54,7 @@ Install parameters:
 
 | Parameter | Description | Default |
 | --------- | ----------- | ------- |
-| **check_signature** | Whether to verify the downloaded Butler archive's signature. | `true` |
+| **checksum** | The expected checksum of the downloaded Butler archive in the `alg:hash` format (e.g.: `sha256:01233456789abcdef`). | `""` |
 | **update_path** | Whether to update the PATH variable to include Butler's install directory. | `false` |
 | **butler_version** | Which Butler version to install. | `'latest'` |
 
