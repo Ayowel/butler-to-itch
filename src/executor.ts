@@ -117,7 +117,8 @@ export class ButlerExecutor {
     file: string
   ) {
     return new Promise<void>((resolve, reject) => {
-      const push_args = ['push', file, `${user}/${game}:${channel}`];
+      const target = `${user}/${game}:${channel}`;
+      const push_args = ['push', file, target];
       if (version) {
         push_args.push('--userversion', version);
       }
@@ -139,17 +140,17 @@ export class ButlerExecutor {
       child.on('close', status => {
         let log = core.debug;
         if (status == 0) {
-          core.info(`${child.pid} Pushed ${file}`);
+          core.info(`${child.pid} Pushed ${file} to ${target}`);
         } else {
           log = core.error;
-          core.error(`${child.pid} Failed to push ${file}\n`);
+          core.error(`${child.pid} Failed to push ${file} to ${target}\n`);
         }
         log(`${child.pid} ${stdout.split('\n').join(`\n${child.pid} `)}`);
         log(`${child.pid} ${stderr.split('\n').join(`\n${child.pid} `)}`);
         if (status == 0) {
           resolve();
         } else {
-          reject(Error(`${child.pid} Failed to push ${file}`));
+          reject(Error(`${child.pid} Failed to push ${file} to ${target}`));
         }
       });
     });
