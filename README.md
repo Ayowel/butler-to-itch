@@ -17,7 +17,7 @@ This example pushes 5 files to Itch, each in a dedicated channel.
 # We have the following files in ./build:
 # release-linux.tar.gz, release-windows.zip,
 # release-mac.zip, java-release.apk
-- uses: Ayowel/butler-to-itch@v1
+- uses: Ayowel/butler-to-itch@v2
   with:
     butler_key: ${{ secrets.BUTLER_CREDENTIALS }}
     itch_user: Ayowel
