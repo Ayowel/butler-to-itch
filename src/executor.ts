@@ -40,7 +40,7 @@ export class ButlerExecutor {
     if (alg_hash) {
       const [hash_type, hash] = alg_hash.split(':');
       const cryptohash = crypto.createHash(hash_type);
-      cryptohash.setEncoding('hex')
+      cryptohash.setEncoding('hex');
       cryptohash.write(await fspromises.readFile(path));
       cryptohash.end();
       const calc_hash = cryptohash.read();
