@@ -14,9 +14,9 @@ inputs:
     description: "Where Butler should be downloaded from"
     default: "https://broth.itch.zone/butler"
 
-  check_signature:
-    description: "Should the signature of the downloaded Butler executable be verified"
-    default: "false"
+  checksum:
+    description: "The checksum to use to check the downloaded butler binary. It must be in the form algorithm:checksum."
+    default: ""
   update_path:
     description: "Whether to update the PATH"
     default: "false"

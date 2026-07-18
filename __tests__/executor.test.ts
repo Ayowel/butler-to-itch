@@ -22,8 +22,7 @@ beforeEach(async () => {
     install_opt: {
       butler_source: 'https://broth.itch.zone/butler',
       butler_version: 'latest',
-      check_signature: false,
-      signature: '',
+      checksum: '',
       update_path: false
     },
     push_opt: undefined
@@ -39,12 +38,11 @@ afterEach(async () => {
 
 describe('IsExecutorInstallWorking', () => {
   test(
-    'Install Butler to directory with signature and path update',
+    'Install Butler to directory with checksum and path update',
     async () => {
       const core = await import('@actions/core');
       const executor = await import('../src/executor');
       opts.action = 'install';
-      opts.install_opt.check_signature = true;
       opts.install_opt.update_path = true;
 
       const ex = new executor.ButlerExecutor(opts);
@@ -58,12 +56,11 @@ describe('IsExecutorInstallWorking', () => {
   );
 
   test(
-    'Install Butler to directory without signature and path update',
+    'Install Butler to directory without checksum and path update',
     async () => {
       const core = await import('@actions/core');
       const executor = await import('../src/executor');
       opts.action = 'install';
-      opts.install_opt.check_signature = false;
       opts.install_opt.update_path = false;
 
       const ex = new executor.ButlerExecutor(opts);
@@ -74,6 +71,26 @@ describe('IsExecutorInstallWorking', () => {
       expect((core as any).addPath).not.toHaveBeenCalled();
     },
     10 * 1000
+  );
+  it.each([
+    ['', false],
+    ['sha256:0123456aadf8bd437b6ca6d5eabc298d414a2ed7275068c5ee82485754db21c2', true],
+    ['sha256:0568594aadf8bd437b6ca6d5eabc298d414a2ed7275068c5ee82485754db21c2', false]
+  ])(
+    'Downloaded archive checksum verification works as expected',
+    async (checksum, shouldThrow) => {
+      const atc = await import('@actions/tool-cache');
+      const executor = await import('../src/executor');
+      const path = await atc.downloadTool(
+        'https://broth.itch.zone/butler/linux-amd64/15.29.0/archive.zip'
+      );
+      const ex = new executor.ButlerExecutor(opts);
+      if (shouldThrow) {
+        await expect(() => ex.validateChecksum(path, checksum)).rejects.toThrow();
+      } else {
+        await expect(() => ex.validateChecksum(path, checksum)).resolves.not.toThrow();
+      }
+    }
   );
 });
 
