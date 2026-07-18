@@ -75,11 +75,20 @@ Install parameters:
 | doc | `doc`, `docs`, `documentation` |
 | web | `web`, `html`, `html5` |
 | android | `android`, `mobile` |
-| linux | `linux`, `unix`, `gnu` |
+| linux | `linux`, `unix`, `gnu`, `linuxbsd` |
 | mac | `mac`, `macintosh`, `macos`, `macosx`, `osx` |
 | windows | `win`, `windows`, `xp` |
-| x32 | `x32` |
-| x64 | `x64` |
+| bsd | `bsd`, `linuxbsd`, `freebsd` |
+| amd | `amd(?!64)` |
+| amd64 | `amd64` |
+| armv7 | `armv7` |
+| arm64 | `arm64` |
+| arm | `arm` |
+| ppc64le | `ppc64le` |
+| ppc64 | `ppc64` |
+| s390x | `s390x` |
+| x32 | `x32', 'i[0-9]+86` |
+| x64 | `x64', 'x86_64` |
 
 * If more than one channel string matches, the resulting channel is all maches separated by a "`-`".
 * String matching is case-insensitive
